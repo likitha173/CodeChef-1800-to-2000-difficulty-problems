@@ -1,0 +1,71 @@
+import java.util.*;
+import java.io.*;
+
+class Find_A_B_C {
+    public static int findHighestPower(int n) {
+        int result = 0;
+        for (int i = n; i >= 1; i--) {
+            if ((i & (i - 1)) == 0) {
+                result = i;
+                break;
+            }
+        }
+        return result;
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        int testCases = Integer.parseInt(reader.readLine());
+        StringBuilder output = new StringBuilder();
+
+        while (testCases-- > 0) {
+            int n = Integer.parseInt(reader.readLine());
+            StringTokenizer tokenizer = new StringTokenizer(reader.readLine());
+            int[] values = new int[n + 1];
+            for (int i = 0; i <= n; i++) {
+                values[i] = Integer.parseInt(tokenizer.nextToken());
+            }
+
+            int[] result = {0, 0, 0};
+            for (int power = findHighestPower(n); power > 0; power /= 2) {
+                int diff = values[power] - values[0];
+                if (diff < 0) {
+                    diff = -diff;
+                    int count = diff / power;
+                    if (count == 1) {
+                        count = 2;
+                        if ((result[0] ^ power) <= n) {
+                            result[0] ^= power;
+                            count--;
+                        }
+                        if (count > 0 && (result[1] ^ power) <= n) {
+                            result[1] ^= power;
+                            count--;
+                        }
+                        if (count > 0) {
+                            result[2] ^= power;
+                        }
+                    } else if (count == 3) {
+                        result[0] ^= power;
+                        result[1] ^= power;
+                        result[2] ^= power;
+                    }
+                } else {
+                    int count = diff / power;
+                    if (count == 1) {
+                        if ((result[0] ^ power) <= n) {
+                            result[0] ^= power;
+                        } else if ((result[1] ^ power) <= n) {
+                            result[1] ^= power;
+                        } else {
+                            result[2] ^= power;
+                        }
+                    }
+                }
+                Arrays.sort(result);
+            }
+            output.append(result[0]).append(" ").append(result[1]).append(" ").append(result[2]).append("\n");
+        }
+        System.out.print(output);
+    }
+}
